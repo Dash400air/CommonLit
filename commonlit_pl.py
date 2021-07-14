@@ -225,15 +225,7 @@ class Model(pl.LightningModule):
         }
 
     def training_step(self, batch, batch_idx):
-        labels = batch["label"]
-        input_ids = batch["input_ids"]
-        attention_mask = batch["attention_mask"]
-        token_type_ids = batch["token_type_ids"]
-        
-        loss= self.model(
-                input_ids,
-                attention_mask=attention_mask
-                )
+        loss= self.model(**batch)
         output=loss['logits']
         loss=loss_fn(output,labels)
         self.train_loss +=(loss.item() * len(labels))
@@ -252,14 +244,7 @@ class Model(pl.LightningModule):
         return output
         
     def validation_step(self, batch, batch_idx):
-        labels = batch["label"]
-        input_ids = batch["input_ids"]
-        attention_mask = batch["attention_mask"]
-        token_type_ids = batch["token_type_ids"]
-        loss= self.model(
-                input_ids,
-                attention_mask=attention_mask
-                )
+        loss= self.model(**batch)
         outputs=loss['logits']
         loss=loss_fn(outputs,labels)
         self.val_loss +=(loss.item() * len(labels))
